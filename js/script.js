@@ -27,43 +27,44 @@ function addItem() {
 }
 
 function checkItem(item) {
-	item.setAttribute('onclick', 'deleteItem(this);');
-	item.classList.add('text-muted');
-	item.innerHTML = '<i class="fas fa-trash fa-fw text-danger me-3"></i><del>' + item.innerText + '</del>';
+	id = parseInt(item.id);
 	list = getItems();
-	list[item.id]['checked'] = 1;
+	list[id]['checked'] = 1;
 	setItems(list);
+	renderList();
 }
 
 function deleteItem(item) {
 	item.remove();
-	id = item.id;
+	id = parseInt(item.id);
 	list = getItems();
-	delete list[id];
+	list.splice(id, 1);
 	setItems(list);
+	renderList();
 }
 
-list = getItems();
-layout = '';
-
-for (i = 0; i < list.length; i++) {
-	if (list[i]['checked']) {
-		layout += '<button class="list-group-item list-group-item-action text-muted" onclick="deleteItem(this);" id="' + i + '">';
-		layout += '<i class="fas fa-trash fa-fw text-danger me-3"></i>';
-		layout += '<del>' + list[i]['text'] + '</del>';
+function renderList() {
+	list = getItems();
+	layout = '';
+	for (i = 0; i < list.length; i++) {
+		if (list[i]['checked']) {
+			layout += '<button class="list-group-item list-group-item-action text-muted" onclick="deleteItem(this);" id="' + i + '">';
+			layout += '<i class="fas fa-trash fa-fw text-danger me-3"></i>';
+			layout += '<del>' + list[i]['text'] + '</del>';
+		} else {
+			layout += '<button class="list-group-item list-group-item-action" onclick="checkItem(this);" id="' + i + '">';
+			layout += '<i class="fas fa-check fa-fw text-success me-3"></i>';
+			layout += list[i]['text'];
+		}
+		layout += '</button>';
 	}
-	else {
-		layout += '<button class="list-group-item list-group-item-action" onclick="checkItem(this);" id="' + i + '">';
-		layout += '<i class="fas fa-check fa-fw text-success me-3"></i>';
-		layout += list[i]['text'];
-	}
-	layout += '</button>';
+	output.innerHTML = layout;
 }
-
-output.innerHTML = layout;
 
 document.addEventListener("keydown", function(event) {
 	if (event.key == 'Enter') {
 		addItem();
 	}
 });
+
+renderList();
